@@ -1,0 +1,1097 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>A380X Complete Checklist ✈️</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Source Sans Pro', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Menu icon styles */
+        .menu-icon {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .menu-icon div {
+            width: 30px;
+            height: 4px;
+            background-color: #c9d1d9;
+            margin: 6px 0;
+            transition: 0.4s;
+            border-radius: 2px;
+        }
+
+        .menu-icon.open div.bar1 {
+            transform: rotate(-45deg) translate(-8px, 8px);
+        }
+
+        .menu-icon.open div.bar2 {
+            opacity: 0;
+        }
+
+        .menu-icon.open div.bar3 {
+            transform: rotate(45deg) translate(-8px, -8px);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 80px;
+            font-size: 2.9em;
+            font-weight: 700;
+            color: #ffffff;
+            animation: fadeInDown 1s;
+        }
+
+        .start-button {
+            display: block;
+            margin: 60px auto;
+            padding: 20px 40px;
+            font-size: 1.5em;
+            color: #0d1117;
+            background-color: #58a6ff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+            animation: pulse 2s infinite;
+        }
+
+        .start-button:hover {
+            background-color: #1f6feb;
+        }
+
+        .checklists {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .checklist {
+            display: none;
+        }
+
+        .checklist.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .checklist h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            color: #58a6ff;
+            animation: fadeInDown 1s;
+        }
+
+        .checklist h2 span {
+            margin-left: 10px;
+        }
+
+        .checklist-items {
+            list-style: none;
+        }
+
+        .checklist-item {
+            padding: 20px;
+            margin-bottom: 15px;
+            background-color: #161b22;
+            border-radius: 15px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s ease, transform 0.2s;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            animation: fadeInUp 0.5s;
+        }
+
+        .checklist-item:hover {
+            background-color: #21262d;
+            transform: translateY(-3px);
+        }
+
+        .item-name {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .item-name::before {
+            content: "📝";
+            margin-right: 10px;
+            transition: transform 0.3s;
+        }
+
+        .checklist-item.completed .item-name::before {
+            content: "✅";
+            transform: scale(1.2);
+        }
+
+        .checklist-item.skipped .item-name::before {
+            content: "⏭️";
+            transform: scale(1.2);
+        }
+
+        .dots {
+            flex-shrink: 0;
+            margin: 0 10px;
+            color: #6e7681;
+        }
+
+        .item-setting {
+            flex-shrink: 0;
+            font-family: 'Source Code Pro', monospace;
+            background-color: #0d1117;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: #c9d1d9;
+            font-weight: 700;
+        }
+
+        .checklist-item.completed .item-name,
+        .checklist-item.completed .item-setting {
+            color: #c9d1d9;
+        }
+
+        .checklist-item.skipped {
+            background-color: #424242;
+            position: relative;
+            opacity: 0.6;
+        }
+
+        .checklist-item.skipped .item-name,
+        .checklist-item.skipped .item-setting {
+            color: #a8a8a8;
+            text-decoration: line-through;
+        }
+
+        .checklist-item.completed {
+            background-color: #1c5130;
+            position: relative;
+        }
+
+        .attention {
+            animation: pulseRed 1s infinite;
+        }
+
+        @keyframes pulseRed {
+            0% { background-color: #161b22; }
+            50% { background-color: #c95f5f; }
+            100% { background-color: #161b22; }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .proceed-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px auto;
+            gap: 20px;
+        }
+
+        .proceed-button,
+        .complete-all-button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            color: #0d1117;
+            background-color: #58a6ff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+            font-weight: 500;
+        }
+
+        .proceed-button:hover,
+        .complete-all-button:hover {
+            background-color: #1f6feb;
+            transform: translateY(-3px);
+        }
+
+        /* Footer styles */
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: #6e7681;
+            font-size: 0.9em;
+            background-color: #0d1117;
+            animation: fadeInUp 1s;
+        }
+
+        footer a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(88, 166, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(88, 166, 255, 0); }
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            background-color: #161b22;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            padding: 12px 12px 12px 32px;
+            font-size: 1.2em;
+            color: #c9d1d9;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .sidebar-menu li:hover {
+            background-color: #21262d;
+        }
+
+        .sidebar-menu li.completed {
+            color: #1c5130;
+        }
+
+        .sidebar-menu li.active {
+            background-color: #58a6ff;
+            color: #0d1117;
+        }
+
+        /* Confetti styles */
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 1000;
+        }
+
+        /* Scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
+
+        /* Timer styles */
+        .timer {
+            text-align: center;
+            margin-top: 20px;
+            color: #c9d1d9;
+            font-size: 1.5em;
+            font-weight: 500;
+            animation: fadeIn 1s;
+        }
+
+        .timer p {
+            margin-bottom: 10px;
+        }
+
+        .timer span {
+            color: #58a6ff;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Menu icon -->
+        <div class="menu-icon">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+        <h1>FBW A380X Checklist ✈️</h1>
+        <button class="start-button">Start Checklist</button>
+        <div class="checklists">
+            <!-- Checklists will be populated by JavaScript -->
+        </div>
+        <canvas id="confetti-canvas" class="confetti"></canvas>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <!-- Menu items will be populated by JavaScript -->
+        </ul>
+    </div>
+
+    <!-- Timer Display -->
+    <div class="timer" id="timer-display"></div>
+
+    <!-- Footer -->
+    <footer>
+        WebPage devoloped by <a href="#">LIBO</a>.
+        <br>
+        Checklist was made by <a href="https://flightsim.to/profile/LunchtimeGames">LunchtimeGames</a>.
+
+        <br>
+        
+        All rights reserved © 2024.
+    </footer>
+
+    <!-- Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const startButton = document.querySelector('.start-button');
+            const checklistsContainer = document.querySelector('.checklists');
+            const menuIcon = document.querySelector('.menu-icon');
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarMenu = document.querySelector('.sidebar-menu');
+            const timerDisplay = document.getElementById('timer-display');
+            const confettiCanvas = document.getElementById('confetti-canvas');
+            let currentChecklistIndex = 0;
+            let checklists = [];
+            let timers = {
+                flightTime: null,
+                groundTime: null,
+                flightStartTime: null,
+                groundStartTime: null
+            };
+
+            // Organize the checklists based on A380 procedures
+            const checklistData = [
+                {
+                    title: "FBW A380X PRE FLIGHT ✈️",
+                    items: [
+                        { name: "VATSIM Flightplan filed?", setting: "CONFIRM" },
+                        { name: "Volanta/VA Tracking Started?", setting: "START" },
+                        { name: "Simbrief Flightplan Imported?", setting: "IMPORT" },
+                        { name: "Pre Checks", setting: "CONFIRM" }
+                    ]
+                },
+                {
+                    title: "INITIAL POWER UP ⚡",
+                    items: [
+                        { name: "ALL BATTERIES", setting: "ON" },
+                        { name: "EXTERNAL POWER", setting: "ON" },
+                        { name: "COCKPIT LIGHTING", setting: "ADJUST" }
+                    ]
+                },
+                {
+                    title: "FIRE TEST AND APU START 🔥",
+                    items: [
+                        { name: "RMP 1 and 2", setting: "OFF" },
+                        { name: "STANDBY RADIO NAVIGATION", setting: "ON" },
+                        { name: "COMMUNICATION FREQUENCIES", setting: "TUNE" },
+                        { name: "INTERPHONE RECEPTION", setting: "ADJUST" },
+                        { name: "APU FIRE", setting: "IN and GUARDED" },
+                        { name: "APU AGENT", setting: "CHECK IN and GUARDED" },
+                        { name: "ENGINE 1/2/3/4 FIRE", setting: "OFF" },
+                        { name: "ENGINE AGENTS 1 and 2", setting: "PRESS" },
+                        { name: "FIRE TEST", setting: "ON" },
+                        { name: "APU MASTER SWITCH", setting: "ON" },
+                        { name: "APU START", setting: "ON" }
+                    ]
+                },
+                {
+                    title: "OVERHEAD PANEL LEFT 🔌",
+                    items: [
+                        { name: "ALL WHITE LIGHTS", setting: "OFF" },
+                        { name: "RECORDER GROUND CTL", setting: "ON" },
+                        { name: "EVAC CAPT/CAPT & PURS", setting: "CAPT" },
+                        { name: "PROBE & WINDOW HEAT", setting: "AUTO" },
+                        { name: "ADIRS ALL IR MODE", setting: "NAV" },
+                        { name: "ELT (INOP)", setting: "ARM" }
+                    ]
+                },
+                {
+                    title: "OVERHEAD PANEL CENTER ⚙️",
+                    items: [
+                        { name: "STROBE", setting: "AUTO" },
+                        { name: "BEACON", setting: "OFF" },
+                        { name: "REMAINING EXTERIOR LIGHTS", setting: "AS REQ" },
+                        { name: "SEATBELTS", setting: "ON" },
+                        { name: "NO MOBILE", setting: "ON" },
+                        { name: "EMERGENCY EXIT LIGHTS", setting: "ARM" },
+                        { name: "ENGINE STARTER", setting: "NORM" },
+                        { name: "APU BLEED", setting: "ON" },
+                        { name: "XBLEED", setting: "AUTO" },
+                        { name: "AIRFLOW", setting: "AS REQ" },
+                        { name: "CKPT", setting: "ADJUST" },
+                        { name: "CABIN", setting: "ADJUST" },
+                        { name: "TRIM TK FEED", setting: "ON" },
+                        { name: "MAINTENANCE PANEL LIGHTS", setting: "AS REQ" }
+                    ]
+                },
+                {
+                    title: "OVERHEAD PANEL RIGHT 🔧",
+                    items: [
+                        { name: "CARGO AIR COND", setting: "PRESS" },
+                        { name: "RADIO MANAGEMENT PANEL 3", setting: "NORM" },
+                        { name: "STBY RAD NAV", setting: "CHECK" },
+                        { name: "CVR TEST", setting: "OFF" }
+                    ]
+                },
+                {
+                    title: "MAIN INSTRUMENT PANEL 🖥️",
+                    items: [
+                        { name: "SWITCHING PANEL", setting: "CHECK & SET" },
+                        { name: "INTEGRATED STANDBY INSTRUMENT SYSTEM", setting: "ON" },
+                        { name: "GRAVITY GEAR SYSTEM", setting: "CHECK" },
+                        { name: "CLOCK", setting: "SET" },
+                        { name: "ANTI SKID (A-SKID)", setting: "ON" }
+                    ]
+                },
+                {
+                    title: "PEDESTAL 🎛️",
+                    items: [
+                        { name: "PARK BRAKE", setting: "SET" },
+                        { name: "BODY ACCUMULATOR PRESSURE (INOP)", setting: "CHECK" },
+                        { name: "THRUST LEVERS", setting: "IDLE" },
+                        { name: "THRUST REVERSE", setting: "STOWED" },
+                        { name: "ENGINE MASTERS", setting: "OFF" },
+                        { name: "COCKPIT DOOR", setting: "NORM" },
+                        { name: "OBTAIN AN IFR CLEARANCE", setting: "REQUEST" },
+                        { name: "PREP CHARTS", setting: "AS REQ" },
+                        { name: "MFD SURVEILLANCE DEFAULT", setting: "SET" }
+                    ]
+                },
+                {
+                    title: "INITIALIZE FMS 💾",
+                    items: [
+                        { name: "INTEGRAL LIGHTS", setting: "AS REQ" },
+                        { name: "BAROMETRIC REFERENCE", setting: "SET" },
+                        { name: "ND MODE AND RANGE", setting: "AS REQ" },
+                        { name: "WX RADAR", setting: "OFF" },
+                        { name: "OTHER EFIS OPTIONS", setting: "AS REQ" },
+                        { name: "FD", setting: "ON" },
+                        { name: "NORTH REF", setting: "MAG" },
+                        { name: "SPD, HDG, V/S", setting: "DEFAULTS" },
+                        { name: "ALT", setting: "INITIAL CLIMB" },
+                        { name: "OXYGEN MASKS", setting: "TEST" },
+                        { name: "DOOR SD PAGE REGUL PR LO", setting: "CHECK NOT DISPLAYED" },
+                        { name: "FLIGHTDECK WINDOWS", setting: "CHECK LOCKED" },
+                        { name: "TAKEOFF BRIEFING", setting: "PERFORM" }
+                    ]
+                },
+                {
+                    title: "BEFORE PUSH & START 🚀",
+                    items: [
+                        { name: "IFR CLEARANCE OBTAINED", setting: "REQUEST" },
+                        { name: "THE AIRCRAFT IS SECURE", setting: "CHECK DISCONNECTED" },
+                        { name: "APU IS AVAILABLE", setting: "ON" },
+                        { name: "EXT POWER", setting: "CLOSED" },
+                        { name: "EXTERNAL POWER DISCONNECTION", setting: "ARMED" },
+                        { name: "LOW PRESSURE GROUND CARTS", setting: "IDLE" },
+                        { name: "OBTAIN PUSH & START CLEARANCE", setting: "OFF & REMOVED" },
+                        { name: "BEACON", setting: "ON" },
+                        { name: "DOORS & WINDOWS", setting: "CHECK NORMAL" },
+                        { name: "SLIDES", setting: "ARMED" },
+                        { name: "THRUST LEVERS", setting: "IDLE" },
+                        { name: "PARKING BRAKE & CHOCKS", setting: "SET" }
+                    ]
+                },
+                {
+                    title: "ENGINE START 🔄",
+                    items: [
+                        { name: "ENGINE START SELECTOR", setting: "IGN START" },
+                        { name: "START ENGINES 1 and 2", setting: "ANNOUNCE" },
+                        { name: "ENGINE MASTER 1 then 2", setting: "ON" },
+                        { name: "WHEN AVAIL: ENGINE IDLE PARAMETERS", setting: "CHECK NORMAL" },
+                        { name: "START ENGINES 3 and 4", setting: "ANNOUNCE" },
+                        { name: "ENGINE MASTER 3 then 4", setting: "ON" },
+                        { name: "WHEN AVAIL: ENGINE IDLE PARAMETERS", setting: "CHECK NORMAL" }
+                    ]
+                },
+                {
+                    title: "AFTER ENGINE START ✅",
+                    items: [
+                        { name: "ENGINE START SELECTOR", setting: "NORM" },
+                        { name: "APU BLEED", setting: "OFF" },
+                        { name: "ANTI ICE", setting: "AS REQ" },
+                        { name: "APU", setting: "OFF" },
+                        { name: "GROUND SPOILERS", setting: "ARM" },
+                        { name: "RUDDER TRIM", setting: "ZERO" },
+                        { name: "TO FLAPS", setting: "SET" },
+                        { name: "TRIM", setting: "CHECK" },
+                        { name: "ECAM STATUS", setting: "CHECK" },
+                        { name: "DISCONNECT GROUND CREW", setting: "CLEAR" },
+                        { name: "FLIGHT CONTROLS", setting: "COMPLETE" }
+                    ]
+                },
+                {
+                    title: "TAXI 🛫",
+                    items: [
+                        { name: "TAXI CLEARANCE", setting: "OBTAIN" },
+                        { name: "ND RANGE", setting: "AS REQ" },
+                        { name: "NOSE LIGHTS", setting: "TAXI" },
+                        { name: "RWY TURN OFF", setting: "AS REQ" },
+                        { name: "PARK BRAKE", setting: "OFF" },
+                        { name: "BRAKES", setting: "CHECKED" },
+                        { name: "NW Steering", setting: "AS REQ" },
+                        { name: "ATC CLEARANCE", setting: "CONFIRM" }
+                    ]
+                },
+                {
+                    title: "BEFORE TAKEOFF ✈️",
+                    items: [
+                        { name: "SELECTED RUNWAY AND INPUT DATA", setting: "CHECK" },
+                        { name: "F-PLN (SID, TRANS)", setting: "REVISE OR CHECK" },
+                        { name: "INITIAL CLIMB SPEED AND SPEED LIMIT", setting: "MODIFY OR CHECK" },
+                        { name: "CLEARED ALTITUDE ON FCU", setting: "SET" },
+                        { name: "HDG ON FCU", setting: "PRESET IF REQ" },
+                        { name: "FLIGHT DIRECTOR", setting: "CHECK SELECTED ON" },
+                        { name: "PFD/ND", setting: "CHECK" },
+                        { name: "MFD", setting: "CHECK" },
+                        { name: "V1/VR/V2/THR RATING", setting: "CHECK (BOTH)" },
+                        { name: "TAKEOFF BRIEFING", setting: "CONFIRM" },
+                        { name: "FLIGHT INSTRUMENTS", setting: "CONFIRM" },
+                        { name: "SPLRS", setting: "ARM" },
+                        { name: "FLAPS", setting: "T.O" },
+                        { name: "AUTOBRAKE RTO", setting: "ARM" },
+                        { name: "SIGNS", setting: "AS NEEDED" },
+                        { name: "T.O CONFIG", setting: "TEST" },
+                        { name: "T.O MEMO", setting: "NO BLUE LINE" },
+                        { name: "CABIN", setting: "READY" }
+                    ]
+                },
+                {
+                    title: "LINEUP 🛫",
+                    items: [
+                        { name: "OBTAIN TAKEOFF OR LINEUP CLEARANCE", setting: "ADVISE" },
+                        { name: "CABIN CREW", setting: "AS REQ" },
+                        { name: "PACKS 1 and 2", setting: "SET" },
+                        { name: "EXTERIOR LIGHTS", setting: "SET" },
+                        { name: "ND RANGE", setting: "SET" },
+                        { name: "EFIS", setting: "ON" },
+                        { name: "TRAF", setting: "CLEAR" },
+                        { name: "APPROACH PATH", setting: "ON" },
+                        { name: "STROBES", setting: "ON" },
+                        { name: "TAKEOFF RWY", setting: "CONFIRM (RAAS)" },
+                        { name: "SLIDING TABLE", setting: "STOWED" },
+                        { name: "TCAS", setting: "TA/RA" }
+                    ]
+                },
+                {
+                    title: "TAKEOFF 🚀",
+                    items: [
+                        { name: "TAKEOFF CLEARANCE RECEIVED", setting: "COMPLETE" },
+                        { name: "PARK BRAKE", setting: "OFF" },
+                        { name: "BRAKES", setting: "PRESS & HOLD" },
+                        { name: "TAKEOFF", setting: "ANNOUNCE" },
+                        { name: "THRUST", setting: "25%" },
+                        { name: "BRAKES", setting: "RELEASE" },
+                        { name: "THRUST LEVERS", setting: "FLX/MCT or TOGA" },
+                        { name: "CRONO", setting: "START" }
+                    ]
+                },
+                {
+                    title: "AFTER TAKEOFF 🌅",
+                    items: [
+                        { name: "THRUST LEVERS", setting: "CLIMB" },
+                        { name: "A/THR", setting: "CHECK ACTIVE" },
+                        { name: "PACKS", setting: "ON" },
+                        { name: "AP", setting: "AS REQ" },
+                        { name: "AT F SPEED", setting: "FLAPS 1" },
+                        { name: "AT S SPEED", setting: "FLAPS 0" },
+                        { name: "EXTERIOR LIGHTS", setting: "OFF" },
+                        { name: "GROUND SPOILERS", setting: "DISARM" },
+                        { name: "APU", setting: "OFF" },
+                        { name: "TCAS", setting: "CONFIRM TA/RA" },
+                        { name: "ANTI ICE", setting: "AS REQ" }
+                    ]
+                },
+                {
+                    title: "CLIMB ☁️",
+                    items: [
+                        { name: "AIRCRAFT IS CLIMBING TO OR IS AT INITIALLY CLEARED FL", setting: "ACTION" },
+                        { name: "COMPLETE AFTER TAKEOFF CHECKLIST", setting: "AS REQ" },
+                        { name: "ATC HAS CLEARED FURTHER CLIMB", setting: "AS REQ" },
+                        { name: "CRUISE FL", setting: "REVIEW" },
+                        { name: "ANTI ICE", setting: "REVIEW" },
+                        { name: "ON PASSING 10,000ft", setting: "STD" },
+                        { name: "LANDING LIGHTS", setting: "OFF" },
+                        { name: "SEATBELTS", setting: "CONSIDER OFF" },
+                        { name: "EFIS", setting: "AS REQ" },
+                        { name: "ECAM MEMO", setting: "REVIEW" }
+                    ]
+                },
+                {
+                    title: "CRUISE ✈️",
+                    items: [
+                        { name: "ALT CRZ", setting: "CONFIRM" },
+                        { name: "ECAM MEMO", setting: "REVIEW" },
+                        { name: "SD PAGES", setting: "REVIEW" },
+                        { name: "Monitor flight progress, fuel etc", setting: " " }
+                    ]
+                },
+                {
+                    title: "BEFORE TOD ⬇️",
+                    items: [
+                        { name: "WEATHER AND LANDING INFORMATION", setting: "OBTAIN" },
+                        { name: "LANDING ELEVATION", setting: "CHECK" },
+                        { name: "BARO", setting: "PRE-SET" },
+                        { name: "LANDING PERFORMANCE", setting: "CHECK" },
+                        { name: "IN FMS", setting: "INSERT/CHECK" },
+                        { name: "FMS ACTIVE/F-PLN/ARRIVAL PAGE", setting: "INSERT/CHECK" },
+                        { name: "DES PANEL OF THE FMS ACTIVE/PERF PAGE", setting: "INSERT/CHECK" },
+                        { name: "APPR PANEL OF THE FMS ACTIVE/PERF PAGE", setting: "INSERT/CHECK" },
+                        { name: "GA PANEL OF THE FMS ACTIVE/PERF PAGE", setting: "CHECK" },
+                        { name: "FMS POSITIONAL/NAVAIDS PAGE", setting: "CHECK" },
+                        { name: "LANDING BRIEF", setting: "PERFORM" }
+                    ]
+                },
+                {
+                    title: "DESCENT 🌄",
+                    items: [
+                        { name: "DESCENT CLEARANCE", setting: "OBTAIN" },
+                        { name: "CLEARED ALTITUDE/FL", setting: "SET" },
+                        { name: "ANTI-ICE", setting: "AS REQ" },
+                        { name: "DESCENT", setting: "INITIATE" },
+                        { name: "CREW", setting: "ADVISE" },
+                        { name: "20,000ft", setting: "ADVISE" },
+                        { name: "CABIN CREW", setting: "AS REQ" },
+                        { name: "TER & WX RADAR", setting: "ON" },
+                        { name: "10,000ft", setting: "SET" },
+                        { name: "LANDING LIGHTS", setting: "ON" },
+                        { name: "LANDING DATA", setting: "PUSH" },
+                        { name: "SEATBELTS", setting: "AS REQ" }
+                    ]
+                },
+                {
+                    title: "BEFORE INTERCEPTING ILS 📡",
+                    items: [
+                        { name: "CSTR & LS BUTTON", setting: "ON" },
+                        { name: "NAVAIDS", setting: "CHECK" },
+                        { name: "APPROACH CHECKLIST", setting: "PERFORM" }
+                    ]
+                },
+                {
+                    title: "ILS APPROACH 🛬",
+                    items: [
+                        { name: "ALTIMETER", setting: "SET" },
+                        { name: "APPROACH PHASE", setting: "CHECK/ACTIVATE" },
+                        { name: "MANAGED SPEED", setting: "CHECK" },
+                        { name: "SPEEDBRAKES", setting: "AS REQ" },
+                        { name: "ILS FREQUENCY", setting: "VERIFY" },
+                        { name: "LS", setting: "CHECK ON" },
+                        { name: "ALTITUDE", setting: "VERIFY" },
+                        { name: "SPEED MODE", setting: "MANAGED" },
+                        { name: "APPR MODE", setting: "PRESS" },
+                        { name: "AUTOPILOT 1+2", setting: "ON" },
+                        { name: "FLIGHT MODE ANNUNCIATOR", setting: "CHECK" },
+                        { name: "FLAPS 1 (at VFE -15)", setting: "SET" },
+                        { name: "TCAS MODE", setting: "TA/RA" },
+                        { name: "LOC CAPTURE", setting: "MONITOR" },
+                        { name: "ATC CONTACT", setting: "TOWER" },
+                        { name: "GO AROUND ALTITUDE", setting: "SET" }
+                    ]
+                },
+                {
+                    title: "LANDING 🛬",
+                    items: [
+                        { name: "BELOW 2,000ft", setting: " " },
+                        { name: "LANDING GEAR", setting: "DOWN" },
+                        { name: "AUTO BRAKE", setting: "CONFIRM" },
+                        { name: "GROUND SPOILERS", setting: "ARM" },
+                        { name: "FLAPS 3 (after L/G down and below VFE)", setting: "SET" },
+                        { name: "WHEEL SYSTEM DISPLAY PAGE", setting: "CHECK" },
+                        { name: "FLAPS (below VFE)", setting: "FULL" },
+                        { name: "AUTOTHRUST", setting: "CHECK IN SPEED MODE OR OFF" },
+                        { name: "LANDING MEMO", setting: "NO BLUE LINE" },
+                        { name: "CABIN", setting: "READY" }
+                    ]
+                },
+                {
+                    title: "AFTER LANDING 🛬",
+                    items: [
+                        { name: "REVERSE LEVERS", setting: "STOW" },
+                        { name: "AUTOBRAKE", setting: "DISARM" },
+                        { name: "SPOILER", setting: "DISARM" },
+                        { name: "FLAPS", setting: "RETRACT" },
+                        { name: "APU MASTER", setting: "ON" },
+                        { name: "APU START", setting: "ON" },
+                        { name: "ENGINE START SELECTOR", setting: "OFF" },
+                        { name: "ANTI-ICE", setting: "ON" },
+                        { name: "LANDING LIGHTS", setting: "ON" },
+                        { name: "STROBE", setting: "OFF" },
+                        { name: "OTHER EXTERIOR LIGHTS", setting: "ON" },
+                        { name: "NOSE LIGHT", setting: "ON" },
+                        { name: "RUNWAY TURN OFF LIGHTS & CAMERA", setting: "ON" }
+                    ]
+                },
+                {
+                    title: "SECURING THE AIRCRAFT 🔒",
+                    items: [
+                        { name: "PARKING BRAKE & CHOCKS", setting: "ON, SET" },
+                        { name: "OXYGEN CREW SUPPLY", setting: "OFF" },
+                        { name: "ADIRS", setting: "OFF" },
+                        { name: "EXTERIOR LIGHTS", setting: "OFF" },
+                        { name: "APU BLEED", setting: "OFF" },
+                        { name: "EXTERNAL POWER", setting: "OFF" },
+                        { name: "APU MASTER", setting: "OFF" },
+                        { name: "EMERGENCY LIGHTS", setting: "OFF" },
+                        { name: "NO SMOKING/DEVICES", setting: "OFF" },
+                        { name: "ALL BATTERIES", setting: "OFF" }
+                    ]
+                }
+            ];
+
+            function initializeChecklists() {
+                checklistsContainer.innerHTML = '';
+                checklistData.forEach((data, index) => {
+                    const checklistDiv = document.createElement('div');
+                    checklistDiv.classList.add('checklist');
+                    checklistDiv.id = `checklist${index}`;
+
+                    const checklistHeader = document.createElement('h2');
+                    checklistHeader.textContent = data.title;
+                    checklistDiv.appendChild(checklistHeader);
+
+                    const checklistItems = document.createElement('ul');
+                    checklistItems.classList.add('checklist-items');
+
+                    data.items.forEach(itemData => {
+                        const item = document.createElement('li');
+                        item.classList.add('checklist-item');
+
+                        const itemName = document.createElement('span');
+                        itemName.classList.add('item-name');
+                        itemName.textContent = itemData.name;
+
+                        const dots = document.createElement('span');
+                        dots.classList.add('dots');
+                        dots.textContent = '.'.repeat(Math.max(10, 50 - itemData.name.length));
+
+                        const itemSetting = document.createElement('span');
+                        itemSetting.classList.add('item-setting');
+                        itemSetting.textContent = itemData.setting;
+
+                        item.appendChild(itemName);
+                        item.appendChild(dots);
+                        item.appendChild(itemSetting);
+
+                        checklistItems.appendChild(item);
+                    });
+
+                    const proceedContainer = document.createElement('div');
+                    proceedContainer.classList.add('proceed-container');
+
+                    const completeAllButton = document.createElement('button');
+                    completeAllButton.classList.add('complete-all-button');
+                    completeAllButton.textContent = 'Complete All';
+
+                    const proceedButton = document.createElement('button');
+                    proceedButton.classList.add('proceed-button');
+                    proceedButton.textContent = (index === checklistData.length - 1) ? 'Finish' : 'Proceed';
+
+                    proceedContainer.appendChild(completeAllButton);
+                    proceedContainer.appendChild(proceedButton);
+
+
+                    checklistDiv.appendChild(checklistItems);
+                    checklistDiv.appendChild(proceedContainer);
+
+                    checklistsContainer.appendChild(checklistDiv);
+                });
+
+                checklists = document.querySelectorAll('.checklist');
+            }
+
+            startButton.addEventListener('click', () => {
+                startButton.style.display = 'none';
+                initializeChecklists();
+                checklistsContainer.style.display = 'block';
+                showChecklist(currentChecklistIndex);
+                updateSidebar();
+            });
+
+            function showChecklist(index) {
+                checklists.forEach((checklist, i) => {
+                    checklist.classList.remove('active');
+                    if (i === index) {
+                        checklist.classList.add('active');
+                    }
+                });
+                updateSidebarActive(index);
+
+                // Start timers based on checklist
+                const titleText = checklists[index].querySelector('h2').textContent.toUpperCase();
+                if (titleText.includes('TAKEOFF')) {
+                    timers.flightStartTime = new Date();
+                }
+
+                if (titleText.includes('AFTER LANDING')) {
+                    timers.groundStartTime = new Date();
+                }
+            }
+
+            function hideChecklist(index) {
+                checklists[index].classList.remove('active');
+            }
+
+            function finishChecklist() {
+                // Display timers
+                timerDisplay.innerHTML = '';
+                if (timers.groundStartTime) {
+                    timers.groundTime = new Date() - timers.groundStartTime;
+                    const groundDuration = formatDuration(timers.groundTime);
+                    timerDisplay.innerHTML += `
+                        <p>🕒 Ground Time: <span>${groundDuration}</span></p>
+                    `;
+                }
+
+                if (timers.flightStartTime) {
+                    timers.flightTime = new Date() - timers.flightStartTime;
+                    const flightDuration = formatDuration(timers.flightTime);
+                    timerDisplay.innerHTML += `
+                        <p>🛩️ Flight Time: <span>${flightDuration}</span></p>
+                    `;
+                }
+
+                // Show confetti
+                launchConfetti();
+            }
+
+            function formatDuration(duration) {
+                const hours = Math.floor(duration / (1000 * 60 * 60));
+                const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((duration % (1000 * 60)) / 1000);
+                return `${hours}h ${minutes}m ${seconds}s`;
+            }
+
+            function launchConfetti() {
+                const ctx = confettiCanvas.getContext('2d');
+                confettiCanvas.width = window.innerWidth;
+                confettiCanvas.height = window.innerHeight;
+                confettiCanvas.style.display = 'block';
+
+                const confettiPieces = [];
+                const colors = ['#ff4d4d', '#4dff4d', '#4d4dff', '#ffff4d', '#ff4dff'];
+
+                for (let i = 0; i < 300; i++) {
+                    confettiPieces.push({
+                        x: Math.random() * confettiCanvas.width,
+                        y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+                        w: Math.random() * 5 + 2,
+                        h: Math.random() * 5 + 2,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        speed: Math.random() * 3 + 2,
+                        rotation: Math.random() * 360
+                    });
+                }
+
+                function updateConfetti() {
+                    ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+                    confettiPieces.forEach(p => {
+                        p.y += p.speed;
+                        if (p.y > confettiCanvas.height) p.y = 0;
+                        ctx.save();
+                        ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+                        ctx.rotate((p.rotation += 0.03));
+                        ctx.fillStyle = p.color;
+                        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                        ctx.restore();
+                    });
+                    requestAnimationFrame(updateConfetti);
+                }
+
+                updateConfetti();
+
+                // Stop confetti after some time
+                setTimeout(() => {
+                    confettiCanvas.style.display = 'none';
+                }, 5000);
+            }
+
+            function updateSidebar() {
+                sidebarMenu.innerHTML = '';
+                checklists.forEach((checklist, index) => {
+                    const menuItem = document.createElement('li');
+                    menuItem.textContent = checklist.querySelector('h2').textContent;
+                    menuItem.dataset.index = index;
+                    sidebarMenu.appendChild(menuItem);
+                });
+            }
+
+            function updateSidebarActive(index) {
+                const menuItems = sidebarMenu.querySelectorAll('li');
+                menuItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (parseInt(item.dataset.index) === index) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+
+            sidebarMenu.addEventListener('click', (e) => {
+                if (e.target && e.target.nodeName === 'LI') {
+                    hideChecklist(currentChecklistIndex);
+                    currentChecklistIndex = parseInt(e.target.dataset.index);
+                    showChecklist(currentChecklistIndex);
+                    sidebar.style.width = '0';
+                    menuIcon.classList.remove('open');
+                }
+            });
+
+            menuIcon.addEventListener('click', () => {
+                menuIcon.classList.toggle('open');
+                if (sidebar.style.width === '250px') {
+                    sidebar.style.width = '0';
+                } else {
+                    sidebar.style.width = '250px';
+                }
+            });
+
+            // Event delegation for checklist items and proceed buttons
+            document.body.addEventListener('click', (e) => {
+                if (e.target.classList.contains('proceed-button')) {
+                    const checklistDiv = e.target.closest('.checklist');
+                    const index = Array.from(checklists).indexOf(checklistDiv);
+                    const items = checklistDiv.querySelectorAll('.checklist-item');
+                    const unmarkedItems = Array.from(items).filter(item => !item.classList.contains('completed') && !item.classList.contains('skipped'));
+
+                    if (unmarkedItems.length === 0) {
+                        hideChecklist(index);
+
+                        // Stop timers based on checklist
+                        const titleText = checklists[index].querySelector('h2').textContent.toUpperCase();
+                        if (titleText.includes('SECURING THE AIRCRAFT')) {
+                            finishChecklist();
+                        }
+
+                        currentChecklistIndex++;
+                        if (currentChecklistIndex < checklists.length) {
+                            showChecklist(currentChecklistIndex);
+                        } else {
+                            checklistsContainer.style.display = 'none';
+                        }
+
+                        // Update menu item
+                        const menuItem = sidebarMenu.querySelector(`li[data-index='${index}']`);
+                        menuItem.classList.add('completed');
+                    } else {
+                        unmarkedItems.forEach(item => {
+                            item.classList.add('attention');
+                            setTimeout(() => {
+                                item.classList.remove('attention');
+                            }, 1000);
+                        });
+                        // Shake animation
+                        e.target.classList.add('shake');
+                        setTimeout(() => {
+                            e.target.classList.remove('shake');
+                        }, 500);
+                    }
+                } else if (e.target.classList.contains('complete-all-button')) {
+                    const checklistDiv = e.target.closest('.checklist');
+                    const items = checklistDiv.querySelectorAll('.checklist-item');
+                    items.forEach(item => {
+                        item.classList.add('completed');
+                    });
+                } else if (e.target.classList.contains('checklist-item') || e.target.closest('.checklist-item')) {
+                    const item = e.target.closest('.checklist-item');
+
+                    if (item.classList.contains('completed')) {
+                        item.classList.remove('completed');
+                    } else {
+                        item.classList.add('completed');
+                    }
+                }
+            });
+
+            // Double-click event for skipping items
+            document.body.addEventListener('dblclick', (e) => {
+                if (e.target.classList.contains('checklist-item') || e.target.closest('.checklist-item')) {
+                    const item = e.target.closest('.checklist-item');
+
+                    if (item.classList.contains('skipped')) {
+                        item.classList.remove('skipped');
+                    } else {
+                        item.classList.remove('completed');
+                        item.classList.add('skipped');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
